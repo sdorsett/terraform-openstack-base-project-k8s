@@ -1,0 +1,16 @@
+apiVersion: "kubeadm.k8s.io/v1beta1"
+kind: ClusterConfiguration
+etcd:
+    local:
+        serverCertSANs:
+        - "{{ internal_ip_address }}"
+        peerCertSANs:
+        - "{{ internal_ip_address }}"
+        extraArgs:
+            initial-cluster: etcd-0=https://10.240.0.30:2380,etcd-1=https://10.240.0.31:2380,etcd-2=https://10.240.0.32:2380
+            initial-cluster-state: new
+            name: {{ inventory_hostname }} 
+            listen-peer-urls: https://{{ internal_ip_address }}:2380
+            listen-client-urls: https://{{ internal_ip_address }}:2379
+            advertise-client-urls: https://{{ internal_ip_address }}:2379
+            initial-advertise-peer-urls: https://{{ internal_ip_address }}:2380

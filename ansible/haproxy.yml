@@ -1,0 +1,8 @@
+---
+# file: haproxy.yml
+- hosts: haproxies
+  become: true
+  become_user: root
+  roles:
+    - common
+    - haproxy

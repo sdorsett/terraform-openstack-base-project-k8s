@@ -1,0 +1,7 @@
+---
+# file: site.yml
+- import_playbook: haproxy.yml
+- import_playbook: etcd.yml
+- import_playbook: controllers.yml
+- import_playbook: workers.yml
+- import_playbook: localhost.yml

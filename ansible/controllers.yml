@@ -1,0 +1,12 @@
+---
+# file: controllers.yml
+- hosts: controllers
+  become: true
+  become_user: root
+  roles:
+    - common
+    - docker
+    - kubeadm
+    - kubelet
+    - kubectl
+    - kubernetes-controller

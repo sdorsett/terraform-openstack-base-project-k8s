@@ -1,0 +1,16 @@
+---
+# file: roles/haproxy/tasks/main.yml
+- name: Install aptitude to prevent apt warnings
+  apt:
+    name: haproxy
+    state: present
+    update_cache: true
+- name: Create haproxy config
+  template:
+    src: haproxy.cfg.j2
+    dest: /etc/haproxy/haproxy.cfg
+    owner: root
+    group: root
+    mode: '0644'
+  notify: 
+    - restart haproxy

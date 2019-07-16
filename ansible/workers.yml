@@ -1,0 +1,13 @@
+---
+# file: workers.yml
+- hosts: workers
+  become: true
+  become_user: root
+  roles:
+    - common
+    - docker
+    - kubeadm
+    - kubelet
+    - kubectl
+    - kubernetes-worker
+

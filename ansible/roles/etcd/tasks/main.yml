@@ -1,0 +1,89 @@
+---
+# file: roles/docker/tasks/main.yml
+- name: Create etcd systemd file
+  template:
+    src: 20-etcd-service-manager.conf.j2
+    dest: /etc/systemd/system/kubelet.service.d/20-etcd-service-manager.conf
+    owner: root
+    group: root
+    mode: '0644'
+  notify: restart kubelet
+- name: Flush handlers
+  meta: flush_handlers
+- name: Create kubeadmcfg.yaml
+  template:
+    src: etcd-kubeadmcfg.yaml.j2
+    dest: /tmp/kubeadmcfg.yaml
+    owner: root
+    group: root
+    mode: '0644'
+- name: Create /etc/kubernetes/pki/etcd/
+  file:
+    path: /etc/kubernetes/pki/etcd/
+    state: directory
+    mode: '0755'
+- name: Generate etcd certs on etcd-0
+  command: kubeadm init phase certs etcd-ca
+  when: inventory_hostname == 'etcd-0'  
+  args:
+    creates: /etc/kubernetes/pki/etcd/ca.crt
+- name: Copy /etc/kubernetes/pki/etcd/ca.crt from etcd-0
+  fetch:
+    src: /etc/kubernetes/pki/etcd/ca.crt
+    dest: "{{ playbook_dir }}/transfer/etcd-ca.crt"
+    flat: yes
+  when: inventory_hostname == 'etcd-0'
+- name: Copy /etc/kubernetes/pki/etcd/ca.key from etcd-0
+  fetch:
+    src: /etc/kubernetes/pki/etcd/ca.key
+    dest: "{{ playbook_dir }}/transfer/etcd-ca.key"
+    flat: yes
+  when: inventory_hostname == 'etcd-0'
+- name: Copy /etc/kubernetes/pki/etcd/ca.crt to etcd-1 and etcd-2
+  copy:
+    src: "{{ playbook_dir }}/transfer/etcd-ca.crt"
+    dest: /etc/kubernetes/pki/etcd/ca.crt
+    owner: root
+    group: root
+    mode: '0755'
+  when: inventory_hostname != 'etcd-0'
+- name: Copy /etc/kubernetes/pki/etcd/ca.key to etcd-1 and etcd-2
+  copy:
+    src: "{{ playbook_dir }}/transfer/etcd-ca.key"
+    dest: /etc/kubernetes/pki/etcd/ca.key
+    owner: root
+    group: root
+    mode: '0755'
+  when: inventory_hostname != 'etcd-0'
+- name: Generate etcd-server certs
+  command: kubeadm init phase certs etcd-server --config=/tmp/kubeadmcfg.yaml
+  args:
+    creates: /etc/kubernetes/pki/etcd/server.crt
+- name: Generate etcd-peer certs
+  command: kubeadm init phase certs etcd-peer --config=/tmp/kubeadmcfg.yaml
+  args:
+    creates: /etc/kubernetes/pki/etcd/peer.crt
+- name: Generate etcd-healthcheck-client certs
+  command: kubeadm init phase certs etcd-healthcheck-client --config=/tmp/kubeadmcfg.yaml
+  args:
+    creates: /etc/kubernetes/pki/etcd/healthcheck-client.crt
+- name: Generate apiserver-etcd-client certs
+  command: kubeadm init phase certs apiserver-etcd-client --config=/tmp/kubeadmcfg.yaml
+  args:
+    creates: /etc/kubernetes/pki/apiserver-etcd-client.crt
+- name: Generate /etc/kubernetes/manifests/etcd.yaml
+  command: kubeadm init phase etcd local --config=/tmp/kubeadmcfg.yaml 
+  args:
+    creates: /etc/kubernetes/manifests/etcd.yaml
+- name: Copy /etc/kubernetes/pki/apiserver-etcd-client.crt from etcd-0
+  fetch:
+    src: /etc/kubernetes/pki/apiserver-etcd-client.crt
+    dest: "{{ playbook_dir }}/transfer/apiserver-etcd-client.crt"
+    flat: yes
+  when: inventory_hostname == 'etcd-0'
+- name: Copy /etc/kubernetes/pki/apiserver-etcd-client.key from etcd-0
+  fetch:
+    src: /etc/kubernetes/pki/apiserver-etcd-client.key
+    dest: "{{ playbook_dir }}/transfer/apiserver-etcd-client.key"
+    flat: yes
+  when: inventory_hostname == 'etcd-0'

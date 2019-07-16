@@ -1,0 +1,13 @@
+- hosts: 127.0.0.1   
+  connection: local
+  gather_facts: no
+
+  tasks:
+    - name: Make sure inventory hosts are updated in /etc/hosts
+      lineinfile:
+        path: /etc/hosts
+        state: present
+        regexp: ".*{{ hostvars[item]['inventory_hostname'] }}$"
+        line: "{{ hostvars[item]['external_ip_address'] }} {{ hostvars[item]['inventory_hostname'] }}"
+      with_items:
+        - "{{ groups['all'] }}"

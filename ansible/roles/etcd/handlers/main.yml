@@ -1,0 +1,7 @@
+---
+# file: roles/etcd/handlers/main.yml
+- name: restart kubelet
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: kubelet

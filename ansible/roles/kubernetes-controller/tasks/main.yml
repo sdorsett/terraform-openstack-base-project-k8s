@@ -1,0 +1,82 @@
+---
+# file: roles/kubernetes-controller/tasks/main.yml
+- name:  enable net.bridge.bridge-nf-call-iptables
+  shell: sysctl net.bridge.bridge-nf-call-iptables=1 
+  args:
+    creates: /proc/sys/net/bridge/bridge-nf-call-iptables
+- name: Create kubeadmcfg.yaml
+  template:
+    src: controller-kubeadmcfg.yaml.j2
+    dest: /tmp/kubeadmcfg.yaml
+    owner: root
+    group: root
+    mode: '0644'   
+- name: Create /etc/kubernetes/pki/etcd/
+  file:
+    path: /etc/kubernetes/pki/etcd/
+    state: directory
+    mode: '0755'
+- name: Copy /etc/kubernetes/pki/etcd/ca.crt to controller-0
+  copy:
+    src: "{{ playbook_dir }}/transfer/etcd-ca.crt"
+    dest: /etc/kubernetes/pki/etcd/ca.crt
+  when: inventory_hostname == 'controller-0'
+- name: Copy /etc/kubernetes/pki/apiserver-etcd-client.crt to controller-0
+  copy:
+    src: "{{ playbook_dir }}/transfer/apiserver-etcd-client.crt"
+    dest: /etc/kubernetes/pki/apiserver-etcd-client.crt
+  when: inventory_hostname == 'controller-0'
+- name: Copy /etc/kubernetes/pki/apiserver-etcd-client.key to controller-0
+  copy:
+    src: "{{ playbook_dir }}/transfer/apiserver-etcd-client.key"
+    dest: /etc/kubernetes/pki/apiserver-etcd-client.key
+  when: inventory_hostname == 'controller-0'
+- name: Run kubeadmin init...this can take 30-60 seconds
+  shell: kubeadm init --config /tmp/kubeadmcfg.yaml --upload-certs  > /root/kubeadmin-init-output.txt
+  when: inventory_hostname == 'controller-0'
+  args:
+    creates: /root/kubeadmin-init-output.txt
+- name: Create /root/.kube
+  file:
+    path: /root/.kube/
+    state: directory
+    mode: '0755'
+  when: inventory_hostname == 'controller-0'
+- name: Create /root/.kube/config
+  shell: cp -i /etc/kubernetes/admin.conf /root/.kube/config
+  when: inventory_hostname == 'controller-0'
+  args:
+    creates: /root/.kube/config
+- name: Install flannel
+  shell: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/62e44c867a2846fefb68bd5f178daf4da3095ccb/Documentation/kube-flannel.yml
+  when: inventory_hostname == 'controller-0'
+- name: Install flannel RBAC
+  shell: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/k8s-manifests/kube-flannel-rbac.yml 
+  when: inventory_hostname == 'controller-0'
+- name: Copy /root/kubeadmin-init-output.txt from controller-0
+  fetch:
+    src: /root/kubeadmin-init-output.txt
+    dest: "{{ playbook_dir }}/transfer/kubeadmin-init-output.txt"
+    flat: yes
+  when: inventory_hostname == 'controller-0'
+- name: Copy /root/kubeadmin-init-output.txt to controller-1 & controller-2
+  copy:
+    src: "{{ playbook_dir }}/transfer/kubeadmin-init-output.txt"
+    dest: /root/kubeadmin-init-output.txt
+  when: inventory_hostname != 'controller-0'
+- name: Get kubeadmin join command
+  shell: "grep experimental-control-plane -B 2 /root/kubeadmin-init-output.txt"
+  register: kubeadm_join_command
+  when: inventory_hostname != 'controller-0'
+- name: Run kubeadmin join
+  shell: "{{ kubeadm_join_command.stdout }} --apiserver-advertise-address={{ internal_ip_address}}"
+  when: inventory_hostname != 'controller-0'
+  args:
+        creates: /etc/kubernetes/manifests/kube-apiserver.yaml
+- name: Copy /root/.kube/config from controller-0
+  fetch:
+    src: /root/.kube/config
+    dest: "{{ playbook_dir }}/transfer/kube-config"
+    flat: yes
+  when: inventory_hostname == 'controller-0'
+
