@@ -1,4 +1,6 @@
 - hosts: 127.0.0.1   
+  become: true
+  become_user: root
   connection: local
   gather_facts: no
 
@@ -8,6 +10,6 @@
         path: /etc/hosts
         state: present
         regexp: ".*{{ hostvars[item]['inventory_hostname'] }}$"
-        line: "{{ hostvars[item]['external_ip_address'] }} {{ hostvars[item]['inventory_hostname'] }}"
+        line: "{{ hostvars[item]['ansible_ssh_host'] }} {{ hostvars[item]['inventory_hostname'] }}"
       with_items:
         - "{{ groups['all'] }}"
