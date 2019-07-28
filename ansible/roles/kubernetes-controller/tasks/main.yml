@@ -69,7 +69,7 @@
   register: kubeadm_join_command
   when: inventory_hostname != 'controller-0'
 - name: Run kubeadmin join
-  shell: "{{ kubeadm_join_command.stdout }} --apiserver-advertise-address={{ internal_ip_address}}"
+  shell: "{{ kubeadm_join_command.stdout }} --apiserver-advertise-address={{ hostvars[ansible_fqdn]['ansible_ssh_host']}}"
   when: inventory_hostname != 'controller-0'
   args:
         creates: /etc/kubernetes/manifests/kube-apiserver.yaml
