@@ -38,7 +38,7 @@ defaults
 
 frontend k8s-api
   bind 10.240.0.9:6443
-  bind {{ external_ip_address }}:6443
+  bind {{ ansible_ssh_host }}:6443
   bind 127.0.0.1:6443
   mode tcp
   option tcplog
