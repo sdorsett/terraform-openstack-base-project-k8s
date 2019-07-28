@@ -6,14 +6,3 @@
     name: aptitude
     state: present
     update_cache: true
-- name: Create internal interface file
-  template:
-    src: 01-ens4.yaml.j2
-    dest: /etc/netplan/01-ens4.yaml
-    owner: root
-    group: root
-    mode: '0644'
-  notify: 
-    - Apply netplan
-- name: Flush handlers
-  meta: flush_handlers
