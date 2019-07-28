@@ -3,14 +3,14 @@ kind: ClusterConfiguration
 etcd:
     local:
         serverCertSANs:
-        - "{{ internal_ip_address }}"
+        - "{{ hostvars[ansible_fqdn]['openstack']['private_v4'] }}"
         peerCertSANs:
-        - "{{ internal_ip_address }}"
+        - "{{ hostvars[ansible_fqdn]['openstack']['private_v4'] }}"
         extraArgs:
             initial-cluster: etcd-0=https://10.240.0.30:2380,etcd-1=https://10.240.0.31:2380,etcd-2=https://10.240.0.32:2380
             initial-cluster-state: new
-            name: {{ inventory_hostname }} 
-            listen-peer-urls: https://{{ internal_ip_address }}:2380
-            listen-client-urls: https://{{ internal_ip_address }}:2379
-            advertise-client-urls: https://{{ internal_ip_address }}:2379
-            initial-advertise-peer-urls: https://{{ internal_ip_address }}:2380
+            name: {{ hostvars[ansible_fqdn]['inventory_hostname'] }} 
+            listen-peer-urls: https://{{ hostvars[ansible_fqdn]['openstack']['private_v4'] }}:2380
+            listen-client-urls: https://{{ hostvars[ansible_fqdn]['openstack']['private_v4'] }}:2379
+            advertise-client-urls: https://{{ hostvars[ansible_fqdn]['openstack']['private_v4'] }}:2379
+            initial-advertise-peer-urls: https://{{ hostvars[ansible_fqdn]['openstack']['private_v4'] }}:2380
