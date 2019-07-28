@@ -14,7 +14,7 @@ resource "openstack_compute_instance_v2" "controllers" {
   name            = "controller-${count.index}"
   image_id        = "${data.openstack_images_image_v2.ubuntu_18_04.id}"
   flavor_id       = "${data.openstack_compute_flavor_v2.s1-2.id}"
-  key_pair        = "${openstack_compute_keypair_v2.deploy-k8s-keypair.name}"
+  key_pair        = "${data.openstack_compute_keypair_v2.deploy-keypair.name}"
   security_groups = ["${openstack_compute_secgroup_v2.deploy-k8s-allow-external-ssh.name}"]
 
   network {
@@ -22,7 +22,7 @@ resource "openstack_compute_instance_v2" "controllers" {
   }
 
   network {
-    name = "${data.openstack_networking_network_v2.infra-internal.name}"
+    name = "${data.openstack_networking_network_v2.default-internal.name}"
     fixed_ip_v4 = "10.240.0.1${count.index}"
   }
 
@@ -48,7 +48,7 @@ resource "openstack_compute_instance_v2" "workers" {
   name            = "worker-${count.index}"
   image_id        = "${data.openstack_images_image_v2.ubuntu_18_04.id}"
   flavor_id       = "${data.openstack_compute_flavor_v2.s1-2.id}"
-  key_pair        = "${openstack_compute_keypair_v2.deploy-k8s-keypair.name}"
+  key_pair        = "${data.openstack_compute_keypair_v2.deploy-keypair.name}"
   security_groups = ["${openstack_compute_secgroup_v2.deploy-k8s-allow-external-ssh.name}"]
 
   network {
@@ -56,7 +56,7 @@ resource "openstack_compute_instance_v2" "workers" {
   }
 
   network {
-    name = "${data.openstack_networking_network_v2.infra-internal.name}"
+    name = "${data.openstack_networking_network_v2.default-internal.name}"
     fixed_ip_v4 = "10.240.0.2${count.index}"
   }
 
@@ -82,7 +82,7 @@ resource "openstack_compute_instance_v2" "etcd" {
   name            = "etcd-${count.index}"
   image_id        = "${data.openstack_images_image_v2.ubuntu_18_04.id}"
   flavor_id       = "${data.openstack_compute_flavor_v2.s1-2.id}"
-  key_pair        = "${openstack_compute_keypair_v2.deploy-k8s-keypair.name}"
+  key_pair        = "${data.openstack_compute_keypair_v2.deploy-keypair.name}"
   security_groups = ["${openstack_compute_secgroup_v2.deploy-k8s-allow-external-ssh.name}"]
 
   network {
@@ -90,7 +90,7 @@ resource "openstack_compute_instance_v2" "etcd" {
   }
 
   network {
-    name = "${data.openstack_networking_network_v2.infra-internal.name}"
+    name = "${data.openstack_networking_network_v2.default-internal.name}"
     fixed_ip_v4 = "10.240.0.3${count.index}"
   }
 
