@@ -15,7 +15,7 @@
 
 - name: Install Docker packages
   apt:
-    name: ['docker-ce','docker-ce-cli','containerd.io']
+    name: ['docker-ce=5:18.09.8~3-0~ubuntu-bionic','docker-ce-cli=5:18.09.8~3-0~ubuntu-bionic','containerd.io']
     state: present
 
 - name: Create docker-daemon.json
