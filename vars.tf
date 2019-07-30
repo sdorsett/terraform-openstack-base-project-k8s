@@ -1,9 +1,9 @@
 variable "private_key" {
-  default = "/root/.ssh/id_rsa-deploy-k8s"
+  default = "~/.ssh/id_rsa"
 }
 
 variable "public_key" {
-  default = "/root/.ssh/id_rsa-deploy-k8s.pub"
+  default = "~/.ssh/id_rsa.pub"
 }
 
 variable "ssh_user" {
@@ -11,5 +11,6 @@ variable "ssh_user" {
 }
 
 variable "network-identifier" {
-  default = "infra-internal"
+  default = "default-internal"
 }
+
