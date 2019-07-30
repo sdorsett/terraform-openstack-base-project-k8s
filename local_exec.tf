@@ -6,8 +6,8 @@ resource "null_resource" "remove-ansible-transfer-directory" {
 
 resource "null_resource" "run-ansible-playbook" {
   provisioner "local-exec" {
-    command = "ansible-playbook -i ansible/hosts ansible/site.yml",
+    command = "ansible-playbook -i ./openstack_inventory.py ansible/site.yml"
   }
-  depends_on = [ "null_resource.add-haproxy-to-ansible-hosts" ]
+  depends_on = ["openstack_compute_instance_v2.workers","openstack_compute_instance_v2.controllers","openstack_compute_instance_v2.haproxy","openstack_compute_instance_v2.etcd"]
 }
 
