@@ -65,7 +65,7 @@
     dest: /root/kubeadmin-init-output.txt
   when: inventory_hostname != 'controller-0'
 - name: Get kubeadmin join command
-  shell: "grep experimental-control-plane -B 2 /root/kubeadmin-init-output.txt"
+  shell: "grep control-plane -B 2 /root/kubeadmin-init-output.txt"
   register: kubeadm_join_command
   when: inventory_hostname != 'controller-0'
 - name: Run kubeadmin join
