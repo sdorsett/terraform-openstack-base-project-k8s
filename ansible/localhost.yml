@@ -4,6 +4,9 @@
   connection: local
   gather_facts: no
 
+  roles:
+    - kubectl
+
   tasks:
     - name: Make sure inventory hosts are updated in /etc/hosts
       lineinfile:
