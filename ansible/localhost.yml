@@ -16,3 +16,13 @@
         line: "{{ hostvars[item]['ansible_ssh_host'] }} {{ hostvars[item]['inventory_hostname'] }}"
       with_items:
         - "{{ groups['all'] }}"
+    - name: create /home/ubuntu/.kube/
+      file:
+        path: /home/ubuntu/.kube
+        state: directory
+        owner: ubuntu
+        group: ubuntu
+    - name: Copy ansible/kube-config to /root/.kube/config
+      shell: cp {{ playbook_dir }}/transfer/kube-config /home/ubuntu/.kube/config
+      args:
+        creates: /home/ubuntu/.kube/config
