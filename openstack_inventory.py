@@ -57,7 +57,8 @@ import os
 import sys
 import time
 from distutils.version import StrictVersion
-from io import StringIO
+#from io import StringIO
+from io import BytesIO as StringIO
 
 import json
 
