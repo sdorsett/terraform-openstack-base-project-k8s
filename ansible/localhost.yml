@@ -24,5 +24,3 @@
         group: ubuntu
     - name: Copy ansible/kube-config to /root/.kube/config
       shell: cp {{ playbook_dir }}/transfer/kube-config /home/ubuntu/.kube/config
-      args:
-        creates: /home/ubuntu/.kube/config
