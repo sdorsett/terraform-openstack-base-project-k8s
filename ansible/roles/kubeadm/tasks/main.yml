@@ -6,6 +6,13 @@
 - name: Add Kubernetes APT repository
   apt_repository:
     repo: deb https://apt.kubernetes.io/ kubernetes-xenial main
+- name: Create /etc/default/kubelet
+  template:
+    src: kubelet.j2
+    dest:  /etc/default/kubelet
+    owner: ubuntu
+    group: ubuntu
+    mode: '0644'
 
 - name: Install kubeadm
   apt:
