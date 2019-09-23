@@ -3,14 +3,14 @@ kind: ClusterConfiguration
 etcd:
     local:
         serverCertSANs:
-        - "{{ hostvars[ansible_fqdn]['openstack']['private_v4'] }}"
+        - "{{ hostvars[ansible_fqdn]['openstack']['addresses']['default-internal'][0]['addr'] }}"
         peerCertSANs:
-        - "{{ hostvars[ansible_fqdn]['openstack']['private_v4'] }}"
+        - "{{ hostvars[ansible_fqdn]['openstack']['addresses']['default-internal'][0]['addr'] }}"
         extraArgs:
             initial-cluster: etcd-0=https://10.240.0.30:2380,etcd-1=https://10.240.0.31:2380,etcd-2=https://10.240.0.32:2380
             initial-cluster-state: new
             name: {{ hostvars[ansible_fqdn]['inventory_hostname'] }} 
-            listen-peer-urls: https://{{ hostvars[ansible_fqdn]['openstack']['private_v4'] }}:2380
-            listen-client-urls: https://{{ hostvars[ansible_fqdn]['openstack']['private_v4'] }}:2379
-            advertise-client-urls: https://{{ hostvars[ansible_fqdn]['openstack']['private_v4'] }}:2379
-            initial-advertise-peer-urls: https://{{ hostvars[ansible_fqdn]['openstack']['private_v4'] }}:2380
+            listen-peer-urls: https://{{ hostvars[ansible_fqdn]['openstack']['addresses']['default-internal'][0]['addr'] }}:2380
+            listen-client-urls: https://{{ hostvars[ansible_fqdn]['openstack']['addresses']['default-internal'][0]['addr'] }}:2379
+            advertise-client-urls: https://{{ hostvars[ansible_fqdn]['openstack']['addresses']['default-internal'][0]['addr'] }}:2379
+            initial-advertise-peer-urls: https://{{ hostvars[ansible_fqdn]['openstack']['addresses']['default-internal'][0]['addr'] }}:2380

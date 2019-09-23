@@ -1,1 +1,1 @@
-KUBELET_EXTRA_ARGS="--node-ip {{ hostvars[ansible_fqdn]['openstack']['private_v4'] }}"
+KUBELET_EXTRA_ARGS="--node-ip {{ hostvars[ansible_fqdn]['openstack']['addresses']['default-internal'][0]['addr'] }}"

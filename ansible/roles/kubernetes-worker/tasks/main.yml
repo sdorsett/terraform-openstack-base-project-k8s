@@ -24,6 +24,6 @@
   shell: "tail -n 2 /root/kubeadmin-init-output.txt"
   register: kubeadm_join_command
 - name: Run kubeadmin join
-  shell: "{{ kubeadm_join_command.stdout }} --apiserver-advertise-address={{ hostvars[ansible_fqdn]['openstack']['private_v4'] }}"
+  shell: "{{ kubeadm_join_command.stdout }} --apiserver-advertise-address={{ hostvars[ansible_fqdn]['openstack']['addresses']['default-internal'][0]['addr'] }}"
   args:
     creates: /etc/kubernetes/manifests/kube-apiserver.yaml

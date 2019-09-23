@@ -1,7 +1,7 @@
 apiVersion: kubeadm.k8s.io/v1beta2
 kind: ClusterConfiguration
 kubernetesVersion: stable
-controlPlaneEndpoint: "{{ hostvars['haproxy']['openstack']['private_v4'] }}:6443"
+controlPlaneEndpoint: "{{ hostvars['haproxy']['openstack']['addresses']['default-internal'][0]['addr'] }}:6443"
 networking:
   podSubnet: 10.244.0.0/16
 apiServer:
@@ -9,14 +9,14 @@ apiServer:
   - "{{ hostvars['haproxy']['ansible_ssh_host'] }}"
   - "kubernetes.allosaur.us"
   extraArgs:
-    advertise-address: "{{ hostvars['controller-0']['openstack']['private_v4'] }}"
+    advertise-address: "{{ hostvars['controller-0']['openstack']['addresses']['default-internal'][0]['addr'] }}"
 
 etcd:
     external:
         endpoints:
-        - "https://{{ hostvars['etcd-0']['openstack']['private_v4'] }}:2379"
-        - "https://{{ hostvars['etcd-1']['openstack']['private_v4'] }}:2379"
-        - "https://{{ hostvars['etcd-2']['openstack']['private_v4'] }}:2379"
+        - "https://{{ hostvars['etcd-0']['openstack']['addresses']['default-internal'][0]['addr'] }}:2379"
+        - "https://{{ hostvars['etcd-1']['openstack']['addresses']['default-internal'][0]['addr'] }}:2379"
+        - "https://{{ hostvars['etcd-2']['openstack']['addresses']['default-internal'][0]['addr'] }}:2379"
         caFile: /etc/kubernetes/pki/etcd/ca.crt
         certFile: /etc/kubernetes/pki/apiserver-etcd-client.crt
         keyFile: /etc/kubernetes/pki/apiserver-etcd-client.key
