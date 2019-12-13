@@ -1,0 +1,9 @@
+# file: controllers.yml
+- hosts: controllers
+  remote_user: ubuntu
+  become: true
+  become_user: root
+  tasks:
+  - name: Display all variables/facts known for a host
+    debug:
+      var: hostvars[ansible_fqdn]['openstack']['addresses']['default-internal'][0]['addr'] 

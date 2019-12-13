@@ -1,6 +1,6 @@
 apiVersion: kubeadm.k8s.io/v1beta2
 kind: ClusterConfiguration
-kubernetesVersion: stable
+kubernetesVersion: v1.15.5
 controlPlaneEndpoint: "{{ hostvars['haproxy']['openstack']['addresses']['default-internal'][0]['addr'] }}:6443"
 networking:
   podSubnet: 10.244.0.0/16
